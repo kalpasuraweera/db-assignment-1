@@ -6,16 +6,19 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="p-2">
     <?php
     session_start();
     require_once("../includes/db_connect.php");
     require_once("../includes/logout.php");
     ?>
-    <h1 class="text-3xl font-bold mb-4">Student Dashboard</h1>
-    <form action="" method="post">
-        <button type="submit" name="logout" class="bg-blue-500 text-white px-4 py-2 rounded-md">Logout</button>
-    </form>
+     <!-- Student Dashboard Header -->
+     <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Student Dashboard</h1>
+        <form action="" method="post">
+            <button type="submit" name="logout" class="bg-red-500 text-white px-4 py-2 rounded-md">Logout</button>
+        </form>
+    </div>
 
     <!-- Section 1: View course information -->
     <section class="my-8">
@@ -55,33 +58,50 @@
             </form>
 
             <?php
-
+            // Define the query to select a student by student_id
+            $query = "SELECT * FROM student";
 
             if (isset($_POST["search"])) {
                 $student_id = $_POST["student_id"];
-                echo $student_id;
-                // Define the query to select a student by student_id
                 $query = "SELECT * FROM student WHERE student_id = '$student_id'";
-
-                $result = $conn->query($query);
-
-                if ($result) {
-                    if ($result->num_rows > 0) {
-                        echo "<p><strong>Student Information:</strong></p>";
-                        echo "<table border='1'><tr><th>Name</th><th>Date of Birth</th></tr>";
-
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr><td>" . $row["name"] . "</td><td>" . $row["dob"] . "</td></tr>";
-                        }
-
-                        echo "</table>";
-                    } else {
-                        echo "No records found for student ID: $student_id.";
-                    }
-                } else {
-                    echo "Error: " . $conn->error;
-                }
             }
+            $result = $conn->query($query);
+
+            if ($result) {
+                if ($result->num_rows > 0) {
+                    echo "<p class='text-lg font-semibold mb-4'><strong>Student Information:</strong></p>";
+                    echo "<table class='table-auto border border-collapse border-gray-700'>";
+                    echo "<thead class='bg-gray-300'>";
+                    echo "<tr>";
+                    echo "<th class='px-4 py-2'>Student ID</th>";
+                    echo "<th class='px-4 py-2'>Name</th>";
+                    echo "<th class='px-4 py-2'>Date of Birth</th>";
+                    echo "<th class='px-4 py-2'>Academic Program</th>";
+                    echo "<th class='px-4 py-2'>Advisor</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
+
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td class='border px-4 py-2'>" . $row["student_id"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["name"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["dob"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["academic_program"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["advisor"] . "</td>";
+                        echo "</tr>";
+                    }
+
+                    echo "</tbody>";
+                    echo "</table>";
+                } else {
+                    echo "No records found for student ID: $student_id.";
+                }
+            } else {
+                echo "Error: " . $conn->error;
+            }
+
+
             ?>
         </div>
     </section>
