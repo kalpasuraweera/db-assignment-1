@@ -1,27 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Operations</title>
+    <title>Instructor Operations</title>
 </head>
 <body>
-    <h1>Student Operations</h1>
-
+    <h1>Instructor Operations</h1>
+<form action="" method="post">
+    <button type="submit" name="logout">Logout</button>
+</form>
     <?php
-    // Database connection settings
-    $host = "your_host";
-    $username = "your_username";
-    $password = "your_password";
-    $database = "your_database";
-    
-    // Create a MySQL connection
-    $conn = new mysqli($host, $username, $password, $database);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    session_start();
+    require_once("../includes/db_connect.php");
+    require_once("../includes/logout.php");
 
     // Define the query to select all students
-    $query = "SELECT name, age FROM students";
+    $query = "SELECT * FROM student";
 
     echo "<p><strong>Select All Students:</strong></p>";
         
@@ -29,10 +22,10 @@
 
     if ($result) {
         if ($result->num_rows > 0) {
-            echo "<table border='1'><tr><th>Name</th><th>Age</th></tr>";
+            echo "<table border='1'><tr><th>Name</th><th>DOB</th></tr>";
 
             while ($row = $result->fetch_assoc()) {
-                echo "<tr><td>" . $row["name"] . "</td><td>" . $row["age"] . "</td></tr>";
+                echo "<tr><td>" . $row["name"] . "</td><td>" . $row["dob"] . "</td></tr>";
             }
 
             echo "</table>";
@@ -47,6 +40,11 @@
   
     // Close the database connection
     $conn->close();
+
+
+    if(isset($_POST["logout"])) {
+        handleLogout();
+    }
     ?>
 
 </body>
