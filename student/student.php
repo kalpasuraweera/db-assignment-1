@@ -1,3 +1,11 @@
+<?php
+session_start();
+require_once("../includes/db_connect.php");
+require_once("../includes/logout.php");
+if (isset($_POST["logout"])) {
+    handleLogout();
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -7,11 +15,6 @@
 </head>
 
 <body class="p-2">
-    <?php
-    session_start();
-    require_once("../includes/db_connect.php");
-    require_once("../includes/logout.php");
-    ?>
     <!-- Student Dashboard Header -->
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold">Student Dashboard</h1>
@@ -451,7 +454,7 @@
                     echo "<td class='border px-4 py-2'>" . $row["material_id"] . "</td>";
                     echo "<td class='border px-4 py-2'>" . $row["title"] . "</td>";
                     echo "<td class='border px-4 py-2'>" . $row["format"] . "</td>";
-                    echo "<td class='border px-4 py-2'><a href='" . $row["link"] . "'>Download</a></td>";
+                    echo "<td class='border px-4 py-2 text-red-800'><a href='" . $row["link"] . "'>Download</a></td>";
                     echo "<td class='border px-4 py-2'>" . $row["course_name"] . "</td>";
                     echo "<td class='border px-4 py-2'>" . $row["instructor_name"] . "</td>";
                     echo "</tr>";
@@ -472,9 +475,7 @@
     // Close the database connection
     $conn->close();
 
-    if (isset($_POST["logout"])) {
-        handleLogout();
-    }
+
     ?>
 </body>
 
