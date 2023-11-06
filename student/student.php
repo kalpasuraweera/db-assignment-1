@@ -95,9 +95,57 @@
             </form>
 
             <?php
+
+
             if (isset($_POST["search_semester"])) {
-                $semester_id = $_POST["semester_id"];
-                $semester_query = "SELECT * FROM semester WHERE semester_id = '$semester_id'";
+                $semester_id = trim($_POST["semester_id"]);
+
+                // Retrieve and display semester information with related courses
+                $semester_query = "SELECT s.semester_id, s.start_date, s.end_date, c.course_code, c.title, c.description, c.credit_value, c.level
+        FROM semester_course sc
+        INNER JOIN semester s ON sc.semester_id = s.semester_id
+        INNER JOIN course c ON sc.course_code = c.course_code
+        WHERE sc.semester_id = '$semester_id'";
+
+                $semester_result = $conn->query($semester_query);
+
+                if ($semester_result->num_rows > 0) {
+                    echo "<p class='text-lg font-semibold mb-4'><strong>Semester Information and Courses:</strong></p>";
+                    echo "<table class='table-auto border border-collapse border-gray-700'>";
+                    echo "<thead class='bg-gray-300'>";
+                    echo "<tr>";
+                    echo "<th class='px-4 py-2'>Semester ID</th>";
+                    echo "<th class='px-4 py-2'>Start Date</th>";
+                    echo "<th class='px-4 py-2'>End Date</th>";
+                    echo "<th class='px-4 py-2'>Course Code</th>";
+                    echo "<th class='px-4 py-2'>Course Title</th>";
+                    echo "<th class='px-4 py-2'>Course Description</th>";
+                    echo "<th class='px-4 py-2'>Credit Value</th>";
+                    echo "<th class='px-4 py-2'>Level</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
+
+                    while ($row = $semester_result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td class='border px-4 py-2'>" . $row["semester_id"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["start_date"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["end_date"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["course_code"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["title"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["description"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["credit_value"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["level"] . "</td>";
+                        echo "</tr>";
+                    }
+
+                    echo "</tbody>";
+                    echo "</table>";
+                } else {
+                    echo "No records found for Semester ID: $semester_id.";
+                }
+            } else {
+                $semester_query = "SELECT * FROM semester";
                 $semester_result = $conn->query($semester_query);
 
                 if ($semester_result) {
@@ -123,32 +171,13 @@
 
                         echo "</tbody>";
                         echo "</table>";
-
-                        // Retrieve and display courses related to the semester
-                        $courses_query = "SELECT c.course_code, c.title, c.description, c.credit_value, c.level
-                        FROM semester_course sc
-                        INNER JOIN course c ON sc.course_code = c.course_code
-                        WHERE sc.semester_id = '$semester_id'";
-
-                        $courses_result = $conn->query($courses_query);
-
-                        if ($courses_result->num_rows > 0) {
-                            echo "<p class='text-lg font-semibold mt-4'><strong>Courses Offered in this Semester:</strong></p>";
-                            echo "<ul>";
-                            while ($course_row = $courses_result->fetch_assoc()) {
-                                echo "<li>{$course_row['course_code']} - {$course_row['title']}</li>";
-                            }
-                            echo "</ul>";
-                        } else {
-                            echo "No courses found for this semester.";
-                        }
-                    } else {
-                        echo "No records found for Semester ID: $semester_id.";
                     }
                 } else {
                     echo "Error: " . $conn->error;
                 }
             }
+
+
             ?>
         </div>
     </section>
