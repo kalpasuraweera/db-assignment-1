@@ -202,14 +202,14 @@
 
             <?php
             if (isset($_POST["enroll"])) {
-                $student_id = $_POST["student_id"];
+                $student_id = trim($_POST["student_id"]);
                 $course_code = $_POST["course_code"];
                 $semester_id = $_POST["semester_id"];
                 // You should validate input data here.
             
                 // Insert the enrollment record into the enroll table
                 $enroll_query = "INSERT INTO enroll (semester_id, course_code, student_id, enrollment_status) 
-                            VALUES ('$semester_id', '$course_code', '$student_id', 'Enrolled')";
+                            VALUES ('$semester_id', '$course_code', '$student_id', 'waitlisted')";
 
                 if ($conn->query($enroll_query) === TRUE) {
                     echo "Enrollment successful.";
@@ -303,7 +303,7 @@
             $query = "SELECT * FROM student";
 
             if (isset($_POST["search_student"])) {
-                $student_id = $_POST["student_id"];
+                $student_id = trim($_POST["student_id"]);
                 $query = "SELECT * FROM student WHERE student_id = '$student_id'";
             }
             $result = $conn->query($query);
@@ -362,7 +362,7 @@
 
             <?php
             if (isset($_POST["search_grades"])) {
-                $student_id = $_POST["student_id"];
+                $student_id = trim($_POST["student_id"]);
 
                 // Define the SQL query to join the "grade" and "course" tables to retrieve grades and course information
                 $grades_query = "SELECT g.course_code, c.title, c.credit_value, g.grade_value
