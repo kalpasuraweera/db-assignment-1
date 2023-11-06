@@ -451,7 +451,7 @@
                     echo "<td class='border px-4 py-2'>" . $row["material_id"] . "</td>";
                     echo "<td class='border px-4 py-2'>" . $row["title"] . "</td>";
                     echo "<td class='border px-4 py-2'>" . $row["format"] . "</td>";
-                    echo "<td class='border px-4 py-2'><a href='" . $row["link"] . "'>Access Material</a></td>";
+                    echo "<td class='border px-4 py-2'><a href='" . $row["link"] . "'>Download</a></td>";
                     echo "<td class='border px-4 py-2'>" . $row["course_name"] . "</td>";
                     echo "<td class='border px-4 py-2'>" . $row["instructor_name"] . "</td>";
                     echo "</tr>";
