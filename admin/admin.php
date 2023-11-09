@@ -112,7 +112,7 @@ if (isset($_POST["logout"])) {
 
             <!-- Table to Display Existing Prerequisites -->
             <?php
-            $prerequisite_query = "SELECT * FROM course_prerequisites WHERE course_code = '$course_code'";
+            $prerequisite_query = "SELECT * FROM prerequisite WHERE course_code = '$course_code'";
             $prerequisite_result = $conn->query($prerequisite_query);
 
             if ($prerequisite_result->num_rows > 0) {
@@ -166,7 +166,7 @@ if (isset($_POST["logout"])) {
 
                 // Insert the co-requisite into the database or update the existing record
                 // Replace this with your actual database interaction code
-                $sql = "INSERT INTO course_corequisites (course_code, requested_course) VALUES ('$course_code', '$requested_course') ON DUPLICATE KEY UPDATE requested_course = VALUES(requested_course)";
+                $sql = "INSERT INTO co_requisite (course_code, requested_course) VALUES ('$course_code', '$requested_course') ON DUPLICATE KEY UPDATE requested_course = VALUES(requested_course)";
 
                 // Execute the SQL query (assuming you have a database connection)
                 // $conn->query($sql);
@@ -185,7 +185,7 @@ if (isset($_POST["logout"])) {
             <?php
             // Retrieve and display the co-requisites table
             // Replace this with your actual database retrieval code
-            $co_requisites_query = "SELECT course_code, requested_course FROM course_corequisites";
+            $co_requisites_query = "SELECT course_code, requested_course FROM co_requisite";
             $co_requisites_result = $conn->query($co_requisites_query);
 
             if ($co_requisites_result->num_rows > 0) {
