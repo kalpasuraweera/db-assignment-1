@@ -374,6 +374,9 @@ if (isset($_POST["logout"])) {
                 <label for="course_code" class="block text-lg font-semibold mt-4">Course Code:</label>
                 <input type="text" name="course_code" id="course_code" class="border p-2 rounded-md" required>
 
+                <label for="instructor_id" class="block text-lg font-semibold mt-4">Instructor ID:</label>
+                <input type="text" name="instructor_id" id="instructor_id" class="border p-2 rounded-md" required>
+                
                 <button type="submit" name="add_material" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Add
                     Material</button>
             </form>
@@ -384,7 +387,7 @@ if (isset($_POST["logout"])) {
                 $material_format = $_POST["material_format"];
                 $material_link = $_POST["material_link"];
                 $course_code = $_POST["course_code"];
-                $instructor_id = "IN001"; // Replace with the actual instructor's ID.
+                $instructor_id =  $_POST["instructor_id"];
             
                 // Insert the course material into the database
                 $query = "INSERT INTO course_material (title, format, link, course_code, instructor_id) VALUES ('$material_title', '$material_format', '$material_link', '$course_code', '$instructor_id')";
