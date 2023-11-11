@@ -43,9 +43,8 @@ if (isset($_POST["logout"])) {
                 <label for="credit_value" class="block text-lg font-semibold mt-2">Credit Value:</label>
                 <input type="number" name="credit_value" id="credit_value" class="border p-2 rounded-md" required>
 
-                <label for="offered_semesters" class="block text-lg font-semibold mt-2">Offered Semesters:</label>
-                <input type="text" name="offered_semesters" id="offered_semesters" class="border p-2 rounded-md"
-                    required>
+                <label for="course_level" class="block text-lg font-semibold mt-2">Course Level:</label>
+                <input type="text" name="course_level" id="course_level" class="border p-2 rounded-md" required>
 
                 <button type="submit" name="add_course" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Add
                     Course</button>
@@ -58,23 +57,26 @@ if (isset($_POST["logout"])) {
                 $course_title = trim($_POST["course_title"]);
                 $course_description = trim($_POST["course_description"]);
                 $credit_value = intval($_POST["credit_value"]);
-                $offered_semesters = trim($_POST["offered_semesters"]);
+                $course_level = trim($_POST["course_level"]);
 
                 // Insert the course data into your database
                 // You need to replace these placeholders with your database logic
-                $sql = "INSERT INTO courses (course_code, course_title, course_description, credit_value, offered_semesters) VALUES (?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssds", $course_code, $course_title, $course_description, $credit_value, $offered_semesters);
+                $sql = "INSERT INTO course (course_code, title, description, credit_value, level) 
+                    VALUES ('$course_code', '$course_title', '$course_description', $credit_value, '$course_level')";
 
-                if ($stmt->execute()) {
-                    echo "Course added successfully!";
+                // Execute the SQL query
+                $result = $conn->query($sql);
+
+                if ($result) {
+                    echo "<p class='mt-4 text-green-500'>Course added successfully.</p>";
                 } else {
-                    echo "Error adding the course: " . $stmt->error;
+                    echo "<p class='mt-4 text-red-500'>Error adding course: " . $conn->error . "</p>";
                 }
             }
             ?>
         </div>
     </section>
+
 
 
     <!-- Section: Manage Course Prerequisites -->
@@ -101,7 +103,7 @@ if (isset($_POST["logout"])) {
                 $requested_course = trim($_POST["requested_course"]);
 
                 // Insert the prerequisite into the database
-                $insert_query = "INSERT INTO course_prerequisites (course_code, requested_course) VALUES ('$course_code', '$requested_course')";
+                $insert_query = "INSERT INTO prerequisite (course_code, requested_course) VALUES ('$course_code', '$requested_course')";
                 if ($conn->query($insert_query) === TRUE) {
                     echo "Prerequisite added successfully.";
                 } else {
@@ -112,34 +114,37 @@ if (isset($_POST["logout"])) {
 
             <!-- Table to Display Existing Prerequisites -->
             <?php
-            $prerequisite_query = "SELECT * FROM prerequisite WHERE course_code = '$course_code'";
+            $prerequisite_query = "SELECT * FROM prerequisite";
             $prerequisite_result = $conn->query($prerequisite_query);
 
             if ($prerequisite_result->num_rows > 0) {
-                echo "<p class='text-lg font-semibold mt-4'><strong>Prerequisites for Course Code: $course_code</strong></p>";
+                echo "<p class='text-lg font-semibold mb-2'><strong>Prerequisites:</strong></p>";
                 echo "<table class='table-auto border border-collapse border-gray-700'>";
                 echo "<thead class='bg-gray-300'>";
                 echo "<tr>";
-                echo "<th class='px-4 py-2'>Requested Course Code</th>";
+                echo "<th class='px-4 py-2 border'>Course Code</th>";
+                echo "<th class='px-4 py-2 border'>Requested Course</th>";
                 echo "</tr>";
                 echo "</thead>";
                 echo "<tbody>";
 
                 while ($row = $prerequisite_result->fetch_assoc()) {
                     echo "<tr>";
-                    echo "<td class='border px-4 py-2'>" . $row["requested_course"] . "</td>";
+                    echo "<td class='px-4 py-2 border'>" . $row["course_code"] . "</td>";
+                    echo "<td class='px-4 py-2 border'>" . $row["requested_course"] . "</td>";
                     echo "</tr>";
                 }
 
                 echo "</tbody>";
                 echo "</table>";
             } else {
-                echo "No prerequisites found for Course Code: $course_code.";
+                echo "<p class='mt-4'>No prerequisites.</p>";
             }
+
             ?>
+
         </div>
     </section>
-
     <!-- Section: Manage Course Co-requisites -->
     <section class="my-8">
         <h2 class="text-2xl font-semibold mb-4">Manage Course Co-requisites</h2>
@@ -166,7 +171,9 @@ if (isset($_POST["logout"])) {
 
                 // Insert the co-requisite into the database or update the existing record
                 // Replace this with your actual database interaction code
-                $sql = "INSERT INTO co_requisite (course_code, requested_course) VALUES ('$course_code', '$requested_course') ON DUPLICATE KEY UPDATE requested_course = VALUES(requested_course)";
+                $sql = "INSERT INTO co_requisite (course_code, requested_course) 
+                    VALUES ('$course_code', '$requested_course') 
+                    ON DUPLICATE KEY UPDATE requested_course = VALUES(requested_course)";
 
                 // Execute the SQL query (assuming you have a database connection)
                 // $conn->query($sql);
@@ -174,9 +181,9 @@ if (isset($_POST["logout"])) {
                 // Display a success message or handle errors
                 // Replace this with appropriate success/error handling
                 if ($conn->query($sql)) {
-                    echo "Co-requisite added/updated successfully.";
+                    echo "<p class='mt-4 text-green-500'>Co-requisite added/updated successfully.</p>";
                 } else {
-                    echo "Error: " . $conn->error;
+                    echo "<p class='mt-4 text-red-500'>Error: " . $conn->error . "</p>";
                 }
             }
             ?>
@@ -209,13 +216,11 @@ if (isset($_POST["logout"])) {
                 echo "</tbody>";
                 echo "</table>";
             } else {
-                echo "No co-requisites found.";
+                echo "<p>No co-requisites found.</p>";
             }
             ?>
         </div>
     </section>
-
-
 
     <!-- Section: Manage Enrollment -->
     <section class="my-8">
@@ -286,15 +291,12 @@ if (isset($_POST["logout"])) {
             if (isset($_POST["generate_report"])) {
                 $student_id = trim($_POST["student_id"]);
 
-                // Connect to your database (replace with your connection code)
-                $conn = new mysqli("localhost", "username", "password", "database_name");
-
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
-
-                // Retrieve academic reports for the specified student
-                $report_query = "SELECT * FROM grade WHERE student_id = '$student_id'";
+                // Retrieve academic reports for the specified student, joining with course and instructor tables
+                $report_query = "SELECT g.student_id, g.course_code, g.instructor_id, g.grade_value, g.date, c.title AS course_title, i.name AS instructor_name
+                    FROM grade g
+                    JOIN course c ON g.course_code = c.course_code
+                    JOIN instructor i ON g.instructor_id = i.instructor_id
+                    WHERE g.student_id = '$student_id'";
                 $report_result = $conn->query($report_query);
 
                 if ($report_result->num_rows > 0) {
@@ -303,8 +305,8 @@ if (isset($_POST["logout"])) {
                     echo "<thead class='bg-gray-300'>";
                     echo "<tr>";
                     echo "<th class='px-4 py-2'>Student ID</th>";
-                    echo "<th class='px-4 py-2'>Course Code</th>";
-                    echo "<th class='px-4 py-2'>Instructor ID</th>";
+                    echo "<th class='px-4 py-2'>Course Title</th>";
+                    echo "<th class='px-4 py-2'>Instructor Name</th>";
                     echo "<th class='px-4 py-2'>Grade Value</th>";
                     echo "<th class='px-4 py-2'>Date</th>";
                     echo "</tr>";
@@ -314,8 +316,8 @@ if (isset($_POST["logout"])) {
                     while ($row = $report_result->fetch_assoc()) {
                         echo "<tr>";
                         echo "<td class='border px-4 py-2'>" . $row["student_id"] . "</td>";
-                        echo "<td class='border px-4 py-2'>" . $row["course_code"] . "</td>";
-                        echo "<td class='border px-4 py-2'>" . $row["instructor_id"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["course_title"] . "</td>";
+                        echo "<td class='border px-4 py-2'>" . $row["instructor_name"] . "</td>";
                         echo "<td class='border px-4 py-2'>" . $row["grade_value"] . "</td>";
                         echo "<td class='border px-4 py-2'>" . $row["date"] . "</td>";
                         echo "</tr>";
@@ -326,8 +328,6 @@ if (isset($_POST["logout"])) {
                 } else {
                     echo "No academic reports found for Student ID: $student_id.";
                 }
-
-                $conn->close(); // Close the database connection
             }
             ?>
         </div>
@@ -339,54 +339,72 @@ if (isset($_POST["logout"])) {
         <h2 class="text-2xl font-semibold mb-4">View and Update Course Information</h2>
         <div class="border p-4 rounded-md">
 
+            <?php
+            // Display all rows of the course table
+            $all_courses_query = "SELECT * FROM course";
+            $all_courses_result = $conn->query($all_courses_query);
+
+            if ($all_courses_result->num_rows > 0) {
+                echo "<p class='text-lg font-semibold mb-4'><strong>All Courses:</strong></p>";
+                echo "<table class='table-auto border border-collapse border-gray-700'>";
+                echo "<thead class='bg-gray-300'>";
+                echo "<tr>";
+                echo "<th class='px-4 py-2'>Course Code</th>";
+                echo "<th class='px-4 py-2'>Title</th>";
+                echo "<th class='px-4 py-2'>Description</th>";
+                echo "<th class='px-4 py-2'>Credit Value</th>";
+                echo "<th class='px-4 py-2'>Level</th>";
+                echo "</tr>";
+                echo "</thead>";
+                echo "<tbody>";
+
+                while ($row = $all_courses_result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td class='border px-4 py-2'>" . $row["course_code"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $row["title"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $row["description"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $row["credit_value"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $row["level"] . "</td>";
+                    echo "</tr>";
+                }
+
+                echo "</tbody>";
+                echo "</table>";
+            } else {
+                echo "<p class='text-lg font-semibold mb-4'>No courses found.</p>";
+            }
+            ?>
+
             <!-- Update Course Information Form -->
             <form action="" method="post" class="mb-4">
-                <label for="course_code" class="block text-lg font-semibold">Enter Course Code:</label>
+                <label for="course_code" class="block text-lg font-semibold mt-4">Enter Course Code for Update:</label>
                 <input type="text" name="course_code" id="course_code" class="border p-2 rounded-md" required>
-                <button type="submit" name="search_course"
-                    class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Search</button>
+
+                <!-- Include necessary fields for updating -->
+                <label for="title" class="block text-lg font-semibold mt-2">Course Title:</label>
+                <input type="text" name="title" id="title" class="border p-2 rounded-md" required>
+
+                <label for="description" class="block text-lg font-semibold mt-2">Course Description:</label>
+                <textarea name="description" id="description" class="border p-2 rounded-md" required></textarea>
+
+                <label for="credit_value" class="block text-lg font-semibold mt-2">Credit Value:</label>
+                <input type="text" name="credit_value" id="credit_value" class="border p-2 rounded-md" required>
+
+                <label for="level" class="block text-lg font-semibold mt-2">Course Level:</label>
+                <input type="text" name="level" id="level" class="border p-2 rounded-md" required>
+
+                <button type="submit" name="update_course"
+                    class="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Update Course</button>
             </form>
 
             <?php
-            // Handle form submission
-            if (isset($_POST["search_course"])) {
-                $course_code = trim($_POST["course_code"]);
-
-                // Retrieve course information
-                $course_query = "SELECT * FROM course WHERE course_code = '$course_code'";
-                $course_result = $conn->query($course_query);
-
-                if ($course_result->num_rows > 0) {
-                    $row = $course_result->fetch_assoc();
-
-                    // Display course information in a form for updating
-                    echo "<form action='' method='post' class='mb-4'>";
-                    echo "<label for='title' class='block text-lg font-semibold'>Course Title:</label>";
-                    echo "<input type='text' name='title' id='title' class='border p-2 rounded-md' value='" . $row["title"] . "' required>";
-
-                    echo "<label for='description' class='block text-lg font-semibold'>Course Description:</label>";
-                    echo "<textarea name='description' id='description' class='border p-2 rounded-md' required>" . $row["description"] . "</textarea>";
-
-                    echo "<label for='credit_value' class='block text-lg font-semibold'>Credit Value:</label>";
-                    echo "<input type='text' name='credit_value' id='credit_value' class='border p-2 rounded-md' value='" . $row["credit_value"] . "' required>";
-
-                    echo "<label for='level' class='block text-lg font-semibold'>Course Level:</label>";
-                    echo "<input type='text' name='level' id='level' class='border p-2 rounded-md' value='" . $row["level"] . "' required>";
-
-                    echo "<button type='submit' name='update_course'
-                    class='bg-blue-500 text-white px-4 py-2 rounded-md mt-2'>Update Course</button>";
-                    echo "</form>";
-                } else {
-                    echo "No records found for Course Code: $course_code.";
-                }
-            }
-
             // Handle course update
             if (isset($_POST["update_course"])) {
                 $title = trim($_POST["title"]);
                 $description = trim($_POST["description"]);
                 $credit_value = trim($_POST["credit_value"]);
                 $level = trim($_POST["level"]);
+                $course_code = trim($_POST["course_code"]);
 
                 // Update course information in the database
                 $update_query = "UPDATE course SET title = '$title', description = '$description', credit_value = '$credit_value', level = '$level' WHERE course_code = '$course_code'";
@@ -401,58 +419,71 @@ if (isset($_POST["logout"])) {
     </section>
 
 
+
     <!-- Section: View and Update Student Information -->
     <section class="my-8">
         <h2 class="text-2xl font-semibold mb-4">View and Update Student Information</h2>
         <div class="border p-4 rounded-md">
-            <!-- Form for updating student information -->
+            <?php
+            // Display all rows of the student table
+            $all_students_query = "SELECT * FROM student";
+            $all_students_result = $conn->query($all_students_query);
+
+            if ($all_students_result->num_rows > 0) {
+                echo "<p class='text-lg font-semibold mb-4'><strong>All Students:</strong></p>";
+                echo "<table class='table-auto border border-collapse border-gray-700'>";
+                echo "<thead class='bg-gray-300'>";
+                echo "<tr>";
+                echo "<th class='px-4 py-2'>Student ID</th>";
+                echo "<th class='px-4 py-2'>Name</th>";
+                echo "<th class='px-4 py-2'>Date of Birth</th>";
+                echo "<th class='px-4 py-2'>Academic Program</th>";
+                echo "<th class='px-4 py-2'>Academic Advisor</th>";
+                echo "</tr>";
+                echo "</thead>";
+                echo "<tbody>";
+
+                while ($student_row = $all_students_result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td class='border px-4 py-2'>" . $student_row["student_id"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $student_row["name"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $student_row["dob"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $student_row["academic_program"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $student_row["advisor"] . "</td>";
+                    echo "</tr>";
+                }
+
+                echo "</tbody>";
+                echo "</table>";
+            } else {
+                echo "<p class='text-lg font-semibold mb-4'>No students found.</p>";
+            }
+            ?>
+
+            <!-- Update Student Information Form -->
             <form action="" method="post" class="mb-4">
-                <label for="student_id" class="block text-lg font-semibold">Enter Student ID:</label>
+                <label for="student_id" class="block text-lg font-semibold mt-4">Enter Student ID for Update:</label>
                 <input type="text" name="student_id" id="student_id" class="border p-2 rounded-md" required>
-                <button type="submit" name="search_student"
-                    class="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Search</button>
+
+                <!-- Include necessary fields for updating -->
+                <label for="name" class="block text-lg font-semibold mt-2">Name:</label>
+                <input type="text" name="name" id="name" class="border p-2 rounded-md" required>
+
+                <label for="dob" class="block text-lg font-semibold mt-2">Date of Birth:</label>
+                <input type="date" name="dob" id="dob" class="border p-2 rounded-md" required>
+
+                <label for="academic_program" class="block text-lg font-semibold mt-2">Academic Program:</label>
+                <input type="text" name="academic_program" id="academic_program" class="border p-2 rounded-md" required>
+
+                <label for="advisor" class="block text-lg font-semibold mt-2">Academic Advisor:</label>
+                <input type="text" name="advisor" id="advisor" class="border p-2 rounded-md" required>
+
+                <button type="submit" name="update_student"
+                    class="bg-green-500 text-white px-4 py-2 rounded-md mt-4">Update Student</button>
             </form>
 
             <?php
-            if (isset($_POST["search_student"])) {
-                $student_id = trim($_POST["student_id"]);
-
-                // Retrieve student information
-                // You should replace 'your_db_connection' and 'student' with your actual database connection and table name.
-                $student_query = "SELECT * FROM student WHERE student_id = '$student_id'";
-                $student_result = $your_db_connection->query($student_query);
-
-                if ($student_result->num_rows > 0) {
-                    // Display the student information in a form for updating
-                    $student_data = $student_result->fetch_assoc();
-                    ?>
-                    <form action="" method="post">
-                        <input type="hidden" name="student_id" value="<?php echo $student_data['student_id']; ?>">
-                        <label for="name" class="block text-lg font-semibold">Name:</label>
-                        <input type="text" name="name" id="name" class="border p-2 rounded-md"
-                            value="<?php echo $student_data['name']; ?>" required>
-
-                        <label for="dob" class="block text-lg font-semibold">Date of Birth:</label>
-                        <input type="date" name="dob" id="dob" class="border p-2 rounded-md"
-                            value="<?php echo $student_data['dob']; ?>" required>
-
-                        <label for="academic_program" class="block text-lg font-semibold">Academic Program:</label>
-                        <input type="text" name="academic_program" id="academic_program" class="border p-2 rounded-md"
-                            value="<?php echo $student_data['academic_program']; ?>" required>
-
-                        <label for="advisor" class="block text-lg font-semibold">Academic Advisor:</label>
-                        <input type="text" name="advisor" id="advisor" class="border p-2 rounded-md"
-                            value="<?php echo $student_data['advisor']; ?>" required>
-
-                        <button type="submit" name="update_student"
-                            class="bg-green-500 text-white px-4 py-2 rounded-md mt-4">Update</button>
-                    </form>
-                    <?php
-                } else {
-                    echo "No records found for Student ID: $student_id.";
-                }
-            }
-
+            // Handle student update
             if (isset($_POST["update_student"])) {
                 $student_id = trim($_POST["student_id"]);
                 $name = trim($_POST["name"]);
@@ -461,7 +492,6 @@ if (isset($_POST["logout"])) {
                 $advisor = trim($_POST["advisor"]);
 
                 // Update student information in the database
-                // You should replace 'your_db_connection' and 'student' with your actual database connection and table name.
                 $update_query = "UPDATE student SET name = '$name', dob = '$dob', academic_program = '$academic_program', advisor = '$advisor' WHERE student_id = '$student_id'";
                 if ($your_db_connection->query($update_query) === TRUE) {
                     echo "Student information updated successfully.";
@@ -479,40 +509,61 @@ if (isset($_POST["logout"])) {
         <h2 class="text-2xl font-semibold mb-4">View and Update Instructor Information</h2>
         <div class="border p-4 rounded-md">
 
-            <!-- Form for Updating Instructor Information -->
+            <?php
+            // Display all rows of the instructor table
+            $all_instructors_query = "SELECT * FROM instructor";
+            $all_instructors_result = $conn->query($all_instructors_query);
+
+            if ($all_instructors_result->num_rows > 0) {
+                echo "<p class='text-lg font-semibold mb-4'><strong>All Instructors:</strong></p>";
+                echo "<table class='table-auto border border-collapse border-gray-700'>";
+                echo "<thead class='bg-gray-300'>";
+                echo "<tr>";
+                echo "<th class='px-4 py-2'>Instructor ID</th>";
+                echo "<th class='px-4 py-2'>Name</th>";
+                echo "<th class='px-4 py-2'>Department ID</th>";
+                echo "</tr>";
+                echo "</thead>";
+                echo "<tbody>";
+
+                while ($row = $all_instructors_result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td class='border px-4 py-2'>" . $row["instructor_id"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $row["name"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $row["department_id"] . "</td>";
+                    echo "</tr>";
+                }
+
+                echo "</tbody>";
+                echo "</table>";
+            } else {
+                echo "<p class='text-lg font-semibold mb-4'>No instructors found.</p>";
+            }
+            ?>
+
+            <!-- Update Instructor Information Form -->
             <form action="" method="post" class="mb-4">
-                <label for="instructor_id" class="block text-lg font-semibold">Instructor ID:</label>
+                <label for="instructor_id" class="block text-lg font-semibold mt-4">Enter Instructor ID for
+                    Update:</label>
                 <input type="text" name="instructor_id" id="instructor_id" class="border p-2 rounded-md" required>
 
-                <!-- Other fields to update instructor information -->
-                <label for="name" class="block text-lg font-semibold">Name:</label>
+                <!-- Include necessary fields for updating -->
+                <label for="name" class="block text-lg font-semibold mt-2">Instructor Name:</label>
                 <input type="text" name="name" id="name" class="border p-2 rounded-md" required>
 
-                <label for="department_id" class="block text-lg font-semibold">Department ID:</label>
+                <label for="department_id" class="block text-lg font-semibold mt-2">Department ID:</label>
                 <input type="text" name="department_id" id="department_id" class="border p-2 rounded-md" required>
 
                 <button type="submit" name="update_instructor"
-                    class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Update Instructor</button>
+                    class="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Update Instructor</button>
             </form>
 
             <?php
-            // Database connection setup (Replace with your actual connection details)
-            $servername = "your_server_name";
-            $username = "your_username";
-            $password = "your_password";
-            $dbname = "your_database_name";
-
-            $conn = new mysqli($servername, $username, $password, $dbname);
-
-            if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-            }
-
+            // Handle instructor update
             if (isset($_POST["update_instructor"])) {
-                // Get form input values
-                $instructor_id = $_POST["instructor_id"];
-                $name = $_POST["name"];
-                $department_id = $_POST["department_id"];
+                $name = trim($_POST["name"]);
+                $department_id = trim($_POST["department_id"]);
+                $instructor_id = trim($_POST["instructor_id"]);
 
                 // Update instructor information in the database
                 $update_query = "UPDATE instructor SET name = '$name', department_id = '$department_id' WHERE instructor_id = '$instructor_id'";
@@ -522,9 +573,6 @@ if (isset($_POST["logout"])) {
                     echo "Error updating instructor information: " . $conn->error;
                 }
             }
-
-            // Close the database connection
-            $conn->close();
             ?>
         </div>
     </section>
@@ -543,20 +591,34 @@ if (isset($_POST["logout"])) {
             $material_result = $conn->query($material_query);
 
             if ($material_result->num_rows > 0) {
-                echo '<ul class="list-disc pl-8">';
+                echo "<table class='table-auto border border-collapse border-gray-700'>";
+                echo "<thead class='bg-gray-300'>";
+                echo "<tr>";
+                echo "<th class='px-4 py-2'>Material ID</th>";
+                echo "<th class='px-4 py-2'>Title</th>";
+                echo "<th class='px-4 py-2'>Format</th>";
+                echo "<th class='px-4 py-2'>Link</th>";
+                echo "<th class='px-4 py-2'>Course Code</th>";
+                echo "<th class='px-4 py-2'>Instructor ID</th>";
+                echo "</tr>";
+                echo "</thead>";
+                echo "<tbody>";
+
                 while ($material_row = $material_result->fetch_assoc()) {
-                    echo '<li>';
-                    echo 'Material ID: ' . $material_row['material_id'] . '<br>';
-                    echo 'Title: ' . $material_row['title'] . '<br>';
-                    echo 'Format: ' . $material_row['format'] . '<br>';
-                    echo 'Link: ' . $material_row['link'] . '<br>';
-                    echo 'Course Code: ' . $material_row['course_code'] . '<br>';
-                    echo 'Instructor ID: ' . $material_row['instructor_id'] . '<br>';
-                    echo '</li>';
+                    echo "<tr>";
+                    echo "<td class='border px-4 py-2'>" . $material_row["material_id"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $material_row["title"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $material_row["format"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $material_row["link"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $material_row["course_code"] . "</td>";
+                    echo "<td class='border px-4 py-2'>" . $material_row["instructor_id"] . "</td>";
+                    echo "</tr>";
                 }
-                echo '</ul>';
+
+                echo "</tbody>";
+                echo "</table>";
             } else {
-                echo 'No course materials found.';
+                echo "<p class='text-lg font-semibold mb-4'>No course materials found.</p>";
             }
             ?>
 
@@ -566,7 +628,21 @@ if (isset($_POST["logout"])) {
                 <label for="material_id" class="block text-lg font-semibold">Material ID:</label>
                 <input type="text" name="material_id" id="material_id" class="border p-2 rounded-md" required>
 
-                <!-- Other input fields for updating course materials (title, format, link, course_code, instructor_id) -->
+                <!-- Include necessary fields for updating -->
+                <label for="title" class="block text-lg font-semibold mt-2">Title:</label>
+                <input type="text" name="title" id="title" class="border p-2 rounded-md" required>
+
+                <label for="format" class="block text-lg font-semibold mt-2">Format:</label>
+                <input type="text" name="format" id="format" class="border p-2 rounded-md" required>
+
+                <label for="link" class="block text-lg font-semibold mt-2">Link:</label>
+                <input type="text" name="link" id="link" class="border p-2 rounded-md" required>
+
+                <label for="course_code" class="block text-lg font-semibold mt-2">Course Code:</label>
+                <input type="text" name="course_code" id="course_code" class="border p-2 rounded-md" required>
+
+                <label for="instructor_id" class="block text-lg font-semibold mt-2">Instructor ID:</label>
+                <input type="text" name="instructor_id" id="instructor_id" class="border p-2 rounded-md" required>
 
                 <button type="submit" name="update_material"
                     class="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Update Material</button>
@@ -576,10 +652,14 @@ if (isset($_POST["logout"])) {
             if (isset($_POST["update_material"])) {
                 // Handle the update operation here
                 $material_id = $_POST["material_id"];
-                // Retrieve other form inputs (title, format, link, course_code, instructor_id)
-            
+                $title = $_POST["title"];
+                $format = $_POST["format"];
+                $link = $_POST["link"];
+                $course_code = $_POST["course_code"];
+                $instructor_id = $_POST["instructor_id"];
+
                 // Build and execute the SQL update query
-                $update_query = "UPDATE course_material SET title = '...', format = '...', link = '...', course_code = '...', instructor_id = '...' WHERE material_id = '$material_id'";
+                $update_query = "UPDATE course_material SET title = '$title', format = '$format', link = '$link', course_code = '$course_code', instructor_id = '$instructor_id' WHERE material_id = '$material_id'";
 
                 if ($conn->query($update_query) === TRUE) {
                     echo "Material updated successfully.";
@@ -590,6 +670,8 @@ if (isset($_POST["logout"])) {
             ?>
         </div>
     </section>
+
+
 
 
 
