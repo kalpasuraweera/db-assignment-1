@@ -479,7 +479,7 @@ if (isset($_POST["logout"])) {
                 <input type="text" name="advisor" id="advisor" class="border p-2 rounded-md" required>
 
                 <button type="submit" name="update_student"
-                    class="bg-green-500 text-white px-4 py-2 rounded-md mt-4">Update Student</button>
+                    class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Update Student</button>
             </form>
 
             <?php
@@ -671,12 +671,7 @@ if (isset($_POST["logout"])) {
         </div>
     </section>
 
-
-
-
-
     <?php
-
     // Close the database connection
     $conn->close();
 
