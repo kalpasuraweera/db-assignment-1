@@ -471,11 +471,8 @@ if (isset($_POST["logout"])) {
 
 
     <?php
-
     // Close the database connection
     $conn->close();
-
-
     ?>
 </body>
 
