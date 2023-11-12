@@ -120,7 +120,7 @@ if (isset($_POST["logout"])) {
     ?>
     <script>
         function goBack() {
-            window.history.back();
+            window.location.href = './index.php';
         }
     </script>
 </body>

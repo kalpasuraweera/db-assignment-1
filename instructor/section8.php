@@ -87,7 +87,7 @@ INNER JOIN instructor i ON cm.instructor_id = i.instructor_id";
     ?>
     <script>
         function goBack() {
-            window.history.back();
+            window.location.href = './index.php';
         }
     </script>
 </body>
