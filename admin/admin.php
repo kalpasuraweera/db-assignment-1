@@ -77,6 +77,145 @@ if (isset($_POST["logout"])) {
         </div>
     </section>
 
+    <!-- Section: Add Department -->
+    <section class="my-8">
+        <h2 class="text-2xl font-semibold mb-4">Add Department</h2>
+        <div class="border p-4 rounded-md">
+            <!-- Add Department Form -->
+            <form action="" method="post" class="mb-4">
+                <label for="department_id" class="block text-lg font-semibold">Department ID:</label>
+                <input type="text" name="department_id" id="department_id" class="border p-2 rounded-md" required>
+
+                <label for="department_name" class="block text-lg font-semibold mt-2">Department Name:</label>
+                <input type="text" name="department_name" id="department_name" class="border p-2 rounded-md" required>
+
+                <button type="submit" name="add_department" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Add
+                    Department</button>
+            </form>
+
+            <?php
+            if (isset($_POST["add_department"])) {
+                // Handle the POST request to add a department
+                $department_id = trim($_POST["department_id"]);
+                $department_name = trim($_POST["department_name"]);
+
+                // Insert the department data into your database
+                // You need to replace these placeholders with your database logic
+                $sql = "INSERT INTO department (department_id, department_name) 
+                VALUES ('$department_id', '$department_name')";
+
+                // Execute the SQL query
+                $result = $conn->query($sql);
+
+                if ($result) {
+                    echo "<p class='mt-4 text-green-500'>Department added successfully.</p>";
+                } else {
+                    echo "<p class='mt-4 text-red-500'>Error adding department: " . $conn->error . "</p>";
+                }
+            }
+            ?>
+        </div>
+    </section>
+
+
+    <!-- Section: Add Instructor -->
+    <section class="my-8">
+        <h2 class="text-2xl font-semibold mb-4">Add Instructor</h2>
+        <div class="border p-4 rounded-md">
+            <!-- Add Instructor Form -->
+            <form action="" method="post" class="mb-4">
+                <label for="instructor_id" class="block text-lg font-semibold">Instructor ID:</label>
+                <input type="text" name="instructor_id" id="instructor_id" class="border p-2 rounded-md" required>
+
+                <label for="instructor_name" class="block text-lg font-semibold mt-2">Instructor Name:</label>
+                <input type="text" name="instructor_name" id="instructor_name" class="border p-2 rounded-md" required>
+
+                <label for="department_id" class="block text-lg font-semibold mt-2">Department ID:</label>
+                <input type="text" name="department_id" id="department_id" class="border p-2 rounded-md" required>
+
+                <button type="submit" name="add_instructor" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Add
+                    Instructor</button>
+            </form>
+
+            <?php
+            if (isset($_POST["add_instructor"])) {
+                // Handle the POST request to add an instructor
+                $instructor_id = trim($_POST["instructor_id"]);
+                $instructor_name = trim($_POST["instructor_name"]);
+                $department_id = trim($_POST["department_id"]);
+
+                // Insert the instructor data into your database
+                // You need to replace these placeholders with your database logic
+                $sql = "INSERT INTO instructor (instructor_id, name, department_id) 
+                VALUES ('$instructor_id', '$instructor_name', '$department_id')";
+
+                // Execute the SQL query
+                $result = $conn->query($sql);
+
+                if ($result) {
+                    echo "<p class='mt-4 text-green-500'>Instructor added successfully.</p>";
+                } else {
+                    echo "<p class='mt-4 text-red-500'>Error adding instructor: " . $conn->error . "</p>";
+                }
+            }
+            ?>
+        </div>
+    </section>
+
+
+    <!-- Section: Add Student -->
+    <section class="my-8">
+        <h2 class="text-2xl font-semibold mb-4">Add Student</h2>
+        <div class="border p-4 rounded-md">
+            <!-- Add Student Form -->
+            <form action="" method="post" class="mb-4">
+                <label for="student_id" class="block text-lg font-semibold">Student ID:</label>
+                <input type="text" name="student_id" id="student_id" class="border p-2 rounded-md" required>
+
+                <label for="name" class="block text-lg font-semibold mt-2">Name:</label>
+                <input type="text" name="name" id="name" class="border p-2 rounded-md" required>
+
+                <label for="dob" class="block text-lg font-semibold mt-2">Date of Birth:</label>
+                <input type="date" name="dob" id="dob" class="border p-2 rounded-md" required>
+
+                <label for="academic_program" class="block text-lg font-semibold mt-2">Academic Program:</label>
+                <input type="text" name="academic_program" id="academic_program" class="border p-2 rounded-md" required>
+
+                <label for="advisor" class="block text-lg font-semibold mt-2">Advisor:</label>
+                <input type="text" name="advisor" id="advisor" class="border p-2 rounded-md" required>
+
+                <button type="submit" name="add_student" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Add
+                    Student</button>
+            </form>
+
+            <?php
+            if (isset($_POST["add_student"])) {
+                // Handle the POST request to add a student
+                $student_id = trim($_POST["student_id"]);
+                $name = trim($_POST["name"]);
+                $dob = trim($_POST["dob"]);
+                $academic_program = trim($_POST["academic_program"]);
+                $advisor = trim($_POST["advisor"]);
+
+                // Insert the student data into your database
+                // You need to replace these placeholders with your database logic
+                $sql = "INSERT INTO students (student_id, name, dob, academic_program, advisor) 
+                VALUES ('$student_id', '$name', '$dob', '$academic_program', '$advisor')";
+
+                // Execute the SQL query
+                $result = $conn->query($sql);
+
+                if ($result) {
+                    echo "<p class='mt-4 text-green-500'>Student added successfully.</p>";
+                } else {
+                    echo "<p class='mt-4 text-red-500'>Error adding student: " . $conn->error . "</p>";
+                }
+            }
+            ?>
+        </div>
+    </section>
+
+
 
 
     <!-- Section: Manage Course Prerequisites -->
@@ -145,6 +284,7 @@ if (isset($_POST["logout"])) {
 
         </div>
     </section>
+
     <!-- Section: Manage Course Co-requisites -->
     <section class="my-8">
         <h2 class="text-2xl font-semibold mb-4">Manage Course Co-requisites</h2>
@@ -496,7 +636,7 @@ if (isset($_POST["logout"])) {
                 if ($your_db_connection->query($update_query) === TRUE) {
                     echo "Student information updated successfully.";
                 } else {
-                    echo "Error updating student information: " . $your_db_connection->error;
+                    echo "Error updating student information: ";
                 }
             }
             ?>

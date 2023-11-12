@@ -9,15 +9,15 @@ function handleLogin($username, $password) {
         echo "Connected successfully";
         switch ($username) {
             case 'student':
-                header('Location: student/student.php');
+                header('Location: student/');
                 exit();
     
             case 'admin':
-                header('Location: admin/admin.php');
+                header('Location: admin/');
                 exit();
     
             case 'instructor':
-                header('Location: instructor/instructor.php');
+                header('Location: instructor/');
                 exit();
             default:
                 header('Location: index.php');

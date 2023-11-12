@@ -222,6 +222,8 @@ if (isset($_POST["logout"])) {
             ?>
         </div>
     </section>
+
+    
     <!-- Section 3: View Teaching History -->
     <section class="my-8">
         <h2 class="text-2xl font-semibold mb-4">View Teaching History</h2>
