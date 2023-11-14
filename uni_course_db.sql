@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2023 at 03:17 PM
+-- Generation Time: Nov 14, 2023 at 06:11 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -32,6 +32,22 @@ CREATE TABLE `admin` (
   `role` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`staff_id`, `role`) VALUES
+('SF001', 'Deputy Registrar'),
+('SF002', 'Senior Assistant Registrar'),
+('SF003', 'Assistant Registrar'),
+('SF004', 'Deputy Bursar'),
+('SF005', 'Senior Assistant Bursar'),
+('SF006', 'Assistant Bursar'),
+('SF007', 'Head of the Department'),
+('SF008', 'Lecturer'),
+('SF009', 'Senior Lecturer'),
+('SF010', 'Assistant Network Manager');
+
 -- --------------------------------------------------------
 
 --
@@ -51,9 +67,13 @@ CREATE TABLE `course` (
 --
 
 INSERT INTO `course` (`course_code`, `title`, `description`, `credit_value`, `level`) VALUES
-('C001', 'Quantum physics', 'Quantum mechanics is a fundamental theory in physics that describes the behavior of nature at the scale of atoms and subatomic particles. It is the foundation of all quantum physics including quantum chemistry, quantum field theory, quantum technology, and quantum information science.', 5, 'undergraduate'),
-('C002', 'Physics', 'Physics is the natural science of matter, involving the study of matter, its fundamental constituents, its motion and behavior through space and time, and the related entities of energy and force. Physics is one of the most fundamental scientific disciplines, with its main goal being to understand how the universe behaves. A scientist who specializes in the field of physics is called a physicist.', 2, 'undergraduate'),
-('C003', 'Computer Systems', 'In its most basic form, a computer system is a programmable electronic device that can accept input; store data; and retrieve, process and output information.', 8, 'graduate');
+('C001', 'Quantum physics', 'Quantum mechanics is a fundamental theory in physics that describes the behavior of nature at the scale of atoms and subatomic particles. It is the foundation of all quantum physics including quantum chemistry, quantum field theory, quantum technology, and quantum information science.', 3, 'Undergraduate'),
+('C002', 'Physics', 'Physics is the natural science of matter, involving the study of matter, its fundamental constituents, its motion and behavior through space and time, and the related entities of energy and force. Physics is one of the most fundamental scientific disciplines, with its main goal being to understand how the universe behaves. A scientist who specializes in the field of physics is called a physicist.', 2, 'Undergraduate'),
+('C003', 'Computer Systems', 'In its most basic form, a computer system is a programmable electronic device that can accept input; store data; and retrieve, process and output information.', 2, 'Undergraduate'),
+('C004', 'Discrete Mathematics I', 'This course module covers topics like sets, relations, and functions, including Union and Intersection. It introduces basic logic, including truth tables, predicate logic, and propositional logic. The course also discusses different proof techniques such as equivalence and contradiction. The aim is to help students understand these concepts and apply them in their studies.', 2, 'Undergraduate'),
+('C005', 'Neural Computing ', 'Neural computing refers to the process of information processing performed by networks of neurons. It’s a field that’s closely related to the philosophical tradition known as the Computational theory of mind, also referred to as computationalism. This theory proposes that neural computation is the key to understanding cognition.', 3, 'Undergraduate'),
+('C006', 'Probability and Statistics', 'This course provides the theoretical foundation and understanding of random variables, probability, and various discrete and continuous distributions. It aims to equip students with the ability to apply this knowledge and the tools of probability to solve real-world problems.', 2, 'Undergraduate'),
+('C007', 'Machine Learning', 'Machine Learning (ML) is a branch of artificial intelligence that focuses on the use of data and algorithms to mimic the way humans learn, gradually improving its accuracy. It involves the development and study of statistical algorithms that can effectively perform tasks without explicit instructions. Recently, generative artificial neural networks have been able to surpass many previous approaches in performance.', 3, 'Undergraduate');
 
 -- --------------------------------------------------------
 
@@ -76,7 +96,10 @@ CREATE TABLE `course_material` (
 
 INSERT INTO `course_material` (`material_id`, `title`, `format`, `link`, `course_code`, `instructor_id`) VALUES
 (1, '2022 Past Paper', 'pdf', 'https://getsamplefiles.com/download/pdf/sample-1.pdf', 'C001', 'IN001'),
-(2, 'Physics Syllabus', 'pdf', 'https://srilankaphysics.blogspot.com/2011/09/physics-syllabus.html', 'C001', 'IN001');
+(2, 'Physics Syllabus', 'pdf', 'https://srilankaphysics.blogspot.com/2011/09/physics-syllabus.html', 'C001', 'IN001'),
+(3, 'Memory Organization', 'pdf', 'https://ugvle.ucsc.cmb.ac.lk/pluginfile.php/27013/mod_resource/content/0/Lec%204.1.1.pdf', 'C003', 'IN003'),
+(4, 'Set Theory', 'pdf', 'https://ugvle.ucsc.cmb.ac.lk/pluginfile.php/13427/mod_resource/content/1/Sets.pdf', 'C004', 'IN002'),
+(5, 'Neural Computing', 'pptx', 'https://www.slideshare.net/leonardjessesuccesslord/neural-computing-88965611', 'C005', 'IN001');
 
 -- --------------------------------------------------------
 
@@ -94,8 +117,9 @@ CREATE TABLE `co_requisite` (
 --
 
 INSERT INTO `co_requisite` (`course_code`, `requested_course`) VALUES
-('C001', 'C002'),
-('C001', 'C003');
+('C002', 'C001'),
+('C004', 'C001'),
+('C005', 'C003');
 
 -- --------------------------------------------------------
 
@@ -113,8 +137,11 @@ CREATE TABLE `department` (
 --
 
 INSERT INTO `department` (`department_id`, `department_name`) VALUES
-('DEP01', 'Department of physics'),
-('DEP02', 'department of chemistry');
+('DEP01', 'Department of Physics'),
+('DEP02', 'Department of Statistics'),
+('DEP03', 'Department of Computation and Intelligent Systems'),
+('DEP04', 'Department of Communication and Media Technologies'),
+('DEP05', 'Department of Information Systems Engineering');
 
 -- --------------------------------------------------------
 
@@ -134,8 +161,8 @@ CREATE TABLE `enroll` (
 --
 
 INSERT INTO `enroll` (`semester_id`, `course_code`, `student_id`, `enrollment_status`) VALUES
-('SEM/23/1', 'C001', 'ST/22/0001', 'registered'),
-('SEM/23/1', 'C002', 'ST/22/0001', 'waitlisted');
+('SEM/23/1', 'C001', 'ST/22/0001', 'Registered'),
+('SEM/23/1', 'C002', 'ST/22/0001', 'Waitlisted');
 
 -- --------------------------------------------------------
 
@@ -158,7 +185,9 @@ CREATE TABLE `grade` (
 INSERT INTO `grade` (`student_id`, `course_code`, `instructor_id`, `grade_value`, `date`) VALUES
 ('ST/22/0001', 'C001', 'IN001', '55', '2023-11-06'),
 ('ST/22/0001', 'C002', 'IN002', '80', '2023-11-06'),
-('ST/22/0002', 'C002', 'IN001', '65', '2023-11-12');
+('ST/22/0002', 'C002', 'IN001', '65', '2023-11-12'),
+('ST/22/0003', 'C003', 'IN003', '76', '2023-10-24'),
+('ST/22/0005', 'C006', 'IN005', '75', '2023-10-20');
 
 -- --------------------------------------------------------
 
@@ -177,9 +206,11 @@ CREATE TABLE `instructor` (
 --
 
 INSERT INTO `instructor` (`instructor_id`, `name`, `department_id`) VALUES
-('IN001', 'Wilbert Einstein', 'DEP01'),
-('IN002', 'Stephen Hawking', 'DEP02'),
-('IN003', 'Nikola Tesla', 'DEP02');
+('IN001', 'T.N.B Wijethilake', 'DEP01'),
+('IN002', 'S.V Hamsavasini', 'DEP02'),
+('IN003', 'L.A.S.M Gunathilaka', 'DEP02'),
+('IN004', 'K.D.C.I Thathsarani', 'DEP03'),
+('IN005', 'R.K.N.D Jayawardhane', 'DEP04');
 
 -- --------------------------------------------------------
 
@@ -198,7 +229,10 @@ CREATE TABLE `instructor_contact` (
 
 INSERT INTO `instructor_contact` (`instructor_id`, `contact`) VALUES
 ('IN001', '0776597896'),
-('IN002', '0718965411');
+('IN002', '0718965411'),
+('IN003', '0771254237'),
+('IN004', '0764538273'),
+('IN005', '0711698221');
 
 -- --------------------------------------------------------
 
@@ -218,7 +252,10 @@ CREATE TABLE `instructor_subject` (
 INSERT INTO `instructor_subject` (`instructor_id`, `subject`) VALUES
 ('IN001', 'Quantum Physics'),
 ('IN001', 'Thermodynamics'),
-('IN002', 'Relativity');
+('IN002', 'Relativity'),
+('IN003', 'Artificial Intelligence'),
+('IN004', 'Middleware Architecture'),
+('IN005', 'Cybersecurity');
 
 -- --------------------------------------------------------
 
@@ -236,9 +273,9 @@ CREATE TABLE `prerequisite` (
 --
 
 INSERT INTO `prerequisite` (`course_code`, `requested_course`) VALUES
-('C001', 'C002'),
-('C002', 'C001'),
-('C003', 'C001');
+('C003', 'C001'),
+('C006', 'C004'),
+('C007', 'C006');
 
 -- --------------------------------------------------------
 
@@ -257,7 +294,10 @@ CREATE TABLE `semester` (
 --
 
 INSERT INTO `semester` (`semester_id`, `start_date`, `end_date`) VALUES
-('SEM/23/1', '2023-06-01', '2023-10-31');
+('SEM/23/1', '2023-06-01', '2023-10-31'),
+('SEM/23/2', '2023-11-20', '2024-05-17'),
+('SEM/23/3', '2024-06-03', '2024-10-27'),
+('SEM/23/4', '2024-11-18', '2025-05-16');
 
 -- --------------------------------------------------------
 
@@ -276,7 +316,12 @@ CREATE TABLE `semester_course` (
 
 INSERT INTO `semester_course` (`semester_id`, `course_code`) VALUES
 ('SEM/23/1', 'C001'),
-('SEM/23/1', 'C002');
+('SEM/23/1', 'C002'),
+('SEM/23/1', 'C003'),
+('SEM/23/1', 'C004'),
+('SEM/23/2', 'C006'),
+('SEM/23/4', 'C005'),
+('SEM/23/4', 'C007');
 
 -- --------------------------------------------------------
 
@@ -297,9 +342,11 @@ CREATE TABLE `student` (
 --
 
 INSERT INTO `student` (`student_id`, `name`, `dob`, `academic_program`, `advisor`) VALUES
-('ST/22/0001', 'Kalpa Madhushan Suraweera', '2002-10-15', 'Bachelor\'s', 'Albert Einstein'),
-('ST/22/0002', 'Charles Darwin', '2002-10-17', 'Bachelor\'s', 'Albert Einstein'),
-('ST/22/0003', 'Wilbert Johne', '2001-05-15', 'Bachelor\'s', 'Albert Einstein');
+('ST/22/0001', 'H.D.K.M Suraweera', '2002-10-15', 'Bachelor', 'Dr. C.I. Keppitiyagama'),
+('ST/22/0002', 'T.K.O Mendis', '2002-04-23', 'Bachelor', 'Dr. A.R. Weerasinghe'),
+('ST/22/0003', 'H.M.I Tashmika', '2001-05-15', 'Bachelor', 'Dr. H.E.M.H.B. Ekanayake'),
+('ST/22/0004', 'A.S Thalagalage', '2002-02-20', 'Bachelor', 'Dr. M.D.R.N. Dayarathna'),
+('ST/22/0005', 'J.A.D.A.D JAYALATH ', '2023-02-15', 'Bachelor', 'Dr. P. Gunaratne');
 
 -- --------------------------------------------------------
 
@@ -311,6 +358,17 @@ CREATE TABLE `student_contact` (
   `student_id` varchar(10) NOT NULL,
   `contact` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `student_contact`
+--
+
+INSERT INTO `student_contact` (`student_id`, `contact`) VALUES
+('ST/22/0001', '0762234614'),
+('ST/22/0002', '0770154856'),
+('ST/22/0003', '0785632455'),
+('ST/22/0004', '0763278439'),
+('ST/22/0005', '0721982739');
 
 -- --------------------------------------------------------
 
@@ -329,7 +387,11 @@ CREATE TABLE `teaching` (
 --
 
 INSERT INTO `teaching` (`instructor_id`, `course_code`, `semester_id`) VALUES
-('IN001', 'C001', 'SEM/23/1');
+('IN001', 'C001', 'SEM/23/1'),
+('IN002', 'C002', 'SEM/23/1'),
+('IN003', 'C003', 'SEM/23/1'),
+('IN004', 'C006', 'SEM/23/2'),
+('IN005', 'C005', 'SEM/23/4');
 
 --
 -- Indexes for dumped tables
@@ -440,7 +502,8 @@ ALTER TABLE `student_contact`
 --
 ALTER TABLE `teaching`
   ADD PRIMARY KEY (`instructor_id`,`course_code`,`semester_id`),
-  ADD KEY `course_code` (`course_code`);
+  ADD KEY `course_code` (`course_code`),
+  ADD KEY `teaching_ibfk_3` (`semester_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -450,7 +513,7 @@ ALTER TABLE `teaching`
 -- AUTO_INCREMENT for table `course_material`
 --
 ALTER TABLE `course_material`
-  MODIFY `material_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `material_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
